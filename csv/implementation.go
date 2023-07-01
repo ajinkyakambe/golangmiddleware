@@ -42,15 +42,8 @@ need to add handling of extre double quotes in csv file.
 func New(csvString string) (*CSV, error) {
 	reader := csv.NewReader(strings.NewReader(csvString))
 	reader.TrimLeadingSpace = true
-	reader.LazyQuotes = true
-	reader.ReuseRecord = true
-
-	// Read the header row
-	// _, err := reader.Read()
-	// if err != nil {
-	// 	fmt.Println("error is coming here")
-	// 	return nil, err
-	// }
+	reader.Comma = ','
+	reader.FieldsPerRecord = -1
 
 	// Read the remaining rows
 	var csvRows []CSVRow
@@ -60,14 +53,13 @@ func New(csvString string) (*CSV, error) {
 			if err.Error() == "EOF" {
 				break
 			}
-			fmt.Println("error is coming here inner")
+			fmt.Println("error is coming here inner::")
+			fmt.Printf("%v", err)
 			return nil, err
 		}
 
-		// Handle double quotes in fields
-		// for i := range row {
-		// 	row[i] = strings.Trim(row[i], ` "`)
-		// }
+		length := len(row)
+		fmt.Println(length)
 
 		csvRow := CSVRow{
 			Company:          row[0],
@@ -99,8 +91,8 @@ func New(csvString string) (*CSV, error) {
 
 // Implementing CSVContract methods
 
-func (c *CSV) RowIterator(pos int) RowIteratorContract {
-	return &RowIterator{
+func (c *CSV) RowIterator(pos int) RowIterator {
+	return RowIterator{
 		csvFile:  c,
 		position: pos,
 	}

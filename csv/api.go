@@ -1,7 +1,7 @@
 package csv
 
 type CSVContract interface {
-	RowIterator(pos int) RowIteratorContract
+	RowIterator(pos int) RowIterator
 	Incorporate(other CSV)
 	ToStringRFC4180() string
 }
