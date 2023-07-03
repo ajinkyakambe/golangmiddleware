@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"io"
 	"maccsv/csv"
-	csvMod "maccsv/csvprocessing"
+	csvProcessing "maccsv/csvProcessing"
 	util "maccsv/etc"
 	"net/http"
 	"os"
@@ -44,11 +44,16 @@ func autoDownloadCSV() {
 				fmt.Printf("Error downloading %s: %v\n", u, err)
 			}
 
+			fmt.Println(filename)
+
+			//csvString
 			csvString, err := LoadCSVAsString(filename)
 			if err != nil {
 				fmt.Println("Error:", err)
 				return
 			}
+
+			fmt.Println(csvString)
 
 			// Create a new CSV object
 			csvObj, err := csv.New(csvString)
@@ -58,7 +63,8 @@ func autoDownloadCSV() {
 			}
 
 			iterator := csvObj.RowIterator(0)
-			newPhones := csvMod.GetNewPhonesRegistered(iterator, lastDownloadTime)
+
+			newPhones := csvProcessing.GetNewPhonesRegistered(iterator, lastDownloadTime)
 			fmt.Println(newPhones)
 
 		}(url, serverNumber)
@@ -88,8 +94,17 @@ func DownloadCSV(url, filename string) error {
 	}
 
 	fmt.Printf("Downloaded %s\n", filename)
+	layout := "02-01-2006 15:04:05"
+	currentTime := time.Now()
 
-	lastDownloadTime = time.Now()
+	formattedTimeStr := currentTime.Format(layout)
+	formattedTime, err := time.Parse(layout, formattedTimeStr)
+	if err != nil {
+		fmt.Println("Error parsing time:", err)
+		return err
+	}
+
+	lastDownloadTime = formattedTime
 	return nil
 }
 
@@ -115,6 +130,7 @@ func LoadCSVAsString(filename string) (string, error) {
 		// Remove newlines from quoted fields
 		for i, field := range line {
 			field = strings.ReplaceAll(field, "\n", " ")
+			field = strings.ReplaceAll(field, ",", " /")
 			line[i] = field
 		}
 

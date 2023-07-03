@@ -3,14 +3,6 @@
     {
       "name": "Server 1",
       "url": "https://exportdev:repDEV2023!@my.callmanager.tel/portlet/export/voip/autoconfigDeviceList.csv?lang=en_GB"
-    },
-    {
-      "name": "Server 2",
-      "url": "https://exportdev:repDEV2023!@my.callmanager.tel/portlet/export/voip/autoconfigDeviceList.csv?lang=en_GB"
-    },
-    {
-      "name": "Server 3",
-      "url": "https://exportdev:repDEV2023!@my.callmanager.tel/portlet/export/voip/autoconfigDeviceList.csv?lang=en_GB"
     }
   ]
 }

@@ -4,6 +4,7 @@ import (
 	"encoding/csv"
 	"fmt"
 	"strings"
+	"time"
 )
 
 type CSV struct {
@@ -11,22 +12,22 @@ type CSV struct {
 }
 
 type CSVRow struct {
-	Company          string `csv:"Company"`
-	Person           string `csv:"Person"`
-	Name             string `csv:"Name"`
-	DeviceType       string `csv:"Device type"`
-	MACAddress       string `csv:"MAC address"`
-	Registered       string `csv:"Registered"`
-	Status           string `csv:"Status"`
-	UUIDCreationDate string `csv:"UUID creation date"`
-	DownloadDate     string `csv:"Download date"`
-	HotDesking       string `csv:"Hot desking"`
-	HotDeskingID     string `csv:"Hot desking ID"`
-	HotDeskingPhone  string `csv:"Hot desking phone"`
-	Location         string `csv:"Location"`
-	Group            string `csv:"Group"`
-	Comment          string `csv:"Comment"`
-	Firmware         string `csv:"Firmware"`
+	Company          string    `csv:"Company"`
+	Person           string    `csv:"Person"`
+	Name             string    `csv:"Name"`
+	DeviceType       string    `csv:"Device type"`
+	MACAddress       string    `csv:"MAC address"`
+	Registered       string    `csv:"Registered"`
+	Status           string    `csv:"Status"`
+	UUIDCreationDate time.Time `csv:"UUID creation date"`
+	DownloadDate     time.Time `csv:"Download date"`
+	HotDesking       string    `csv:"Hot desking"`
+	HotDeskingID     string    `csv:"Hot desking ID"`
+	HotDeskingPhone  string    `csv:"Hot desking phone"`
+	Location         string    `csv:"Location"`
+	Group            string    `csv:"Group"`
+	Comment          string    `csv:"Comment"`
+	Firmware         string    `csv:"Firmware"`
 }
 
 type RowIterator struct {
@@ -43,7 +44,7 @@ func New(csvString string) (*CSV, error) {
 	reader := csv.NewReader(strings.NewReader(csvString))
 	reader.TrimLeadingSpace = true
 	reader.Comma = ','
-	reader.FieldsPerRecord = -1
+	reader.LazyQuotes = true
 
 	// Read the remaining rows
 	var csvRows []CSVRow
@@ -54,12 +55,13 @@ func New(csvString string) (*CSV, error) {
 				break
 			}
 			fmt.Println("error is coming here inner::")
-			fmt.Printf("%v", err)
+			fmt.Printf("%v", err.Error())
 			return nil, err
 		}
 
 		length := len(row)
 		fmt.Println(length)
+		fmt.Println(row)
 
 		csvRow := CSVRow{
 			Company:          row[0],
@@ -158,13 +160,6 @@ func (it *RowIterator) Get() []string {
 	// if it.position >= len(it.csvFile.Records) {
 	// 	return nil
 	// }
-
-	fmt.Println("================")
-	fmt.Println("CSV records len")
-	fmt.Println(len(it.csvFile.Records))
-	fmt.Println("csv iterator pos")
-	fmt.Println(it.position)
-	fmt.Println("================")
 
 	if it.position >= len(it.csvFile.Records) {
 		return nil
